@@ -1,9 +1,14 @@
 import type { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
+import { envAppConfig } from "../env/app.env.js";
 import { envClientConfig } from "../env/client.env.js";
 
 export const registerMiddlewares = (app: Hono): void => {
+	if (!envAppConfig.ENABLE_CORS_PROTECTION) {
+		return;
+	}
+
 	app.use(
 		"*",
 		secureHeaders({

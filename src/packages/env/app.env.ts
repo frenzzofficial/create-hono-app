@@ -26,6 +26,9 @@ const serverEnvSchema = z.object({
 	ENABLE_SWAGGER: z.coerce.boolean().default(true),
 	ENABLE_RATE_LIMIT: z.coerce.boolean().default(true),
 	ENABLE_REQUEST_LOGGING: z.coerce.boolean().default(true),
+
+	ENABLE_CORS_PROTECTION: z.coerce.boolean().default(true),
+	ENABLE_CSRF_PROTECTION: z.coerce.boolean().default(true),
 });
 
 const parsedServerEnv = serverEnvSchema.safeParse(process.env);

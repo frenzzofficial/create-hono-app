@@ -13,12 +13,17 @@
 
 import type { Hono } from "hono";
 import { createMiddleware } from "hono/factory";
+import { envAppConfig } from "../env/app.env.js";
 import { envClientConfig } from "../env/client.env.js";
 import { AppError } from "../utils/errors.js";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 export const registerCsrfProtection = (app: Hono): void => {
+	if (!envAppConfig.ENABLE_CSRF_PROTECTION) {
+		return;
+	}
+
 	app.use(
 		"*",
 		createMiddleware(async (c, next) => {

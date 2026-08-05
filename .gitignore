@@ -14,9 +14,8 @@
 node_modules/
 
 # env
-.env
-.env.production
-.env.local
+.env*
+!.env.example
 
 # logs
 logs/
