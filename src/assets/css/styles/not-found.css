@@ -1,0 +1,299 @@
+/* ── Reset ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  /* color: #a5b4fc; */
+}
+
+/* ── Card container ─────────────────────────────────────── */
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ── Top bar (matches quickstart header in homepage) ─────── */
+.card-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot-r {
+  background: var(--primary);
+}
+
+.dot-y {
+  background: var(--destructive);
+}
+
+.dot-g {
+  background: var(--accent);
+}
+
+.bar-label {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--primary);
+  letter-spacing: 0.04em;
+}
+
+/* ── Body ───────────────────────────────────────────────── */
+.card-body {
+  padding: 40px 36px 36px;
+  text-align: center;
+}
+
+/* ── 404 glyph ──────────────────────────────────────────── */
+.code-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.status-num {
+  font-family: var(--mono);
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--foreground);
+  line-height: 1;
+}
+
+/* The middle "0" is accented */
+.status-num .mid {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+
+/* Glitch scanline on the accent digit */
+.status-num .mid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 3px,
+      rgba(108, 99, 255, 0.07) 3px,
+      rgba(108, 99, 255, 0.07) 4px);
+  pointer-events: none;
+}
+
+/* ── Error badge ────────────────────────────────────────── */
+.err-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--destructive);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.err-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--destructive);
+  border-radius: 50%;
+}
+
+h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+  max-width: 340px;
+  margin-inline: auto;
+}
+
+/* ── Path echo box ──────────────────────────────────────── */
+.path-echo {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.path-echo-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.path-echo-value {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: var(--destructive);
+  word-break: break-all;
+}
+
+/* The path is injected by the server into this span */
+#requested-path::before {
+  content: "→ ";
+  color: var(--primary);
+}
+
+/* ── Action buttons ─────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.btn-ghost:hover {
+  color: var(--foreground);
+  border-color: var(--accent-foreground);
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.card-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer-hint {
+  font-size: 0.78rem;
+  color: var(--primary);
+}
+
+.footer-hint code {
+  font-size: 0.78rem;
+}
+
+.health-link {
+  font-size: 0.78rem;
+  color: var(--primary);
+}
+
+.health-link a {
+  color: var(--primary);
+}
+
+.health-link a:hover {
+  color: var(--foreground);
+}
+
+@media (max-width: 420px) {
+  .card-body {
+    padding: 32px 20px 28px;
+  }
+
+  .status-num {
+    font-size: 3rem;
+  }
+}
