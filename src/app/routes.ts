@@ -1,5 +1,5 @@
-import type { Hono } from "hono";
 import { registerOpenApi } from "../packages/middlewares/openapi";
+import type { AppHono } from "../types/hono";
 import { registerHealthRoutes } from "./health/health.routes";
 import { registerApiRoutes } from "./register-api-routes";
 import { registerStaticRoutes } from "./static/static.routes";
@@ -12,7 +12,7 @@ import { registerStaticRoutes } from "./static/static.routes";
 // routes exist — middlewares, config, env, shared utils — which is what
 // `bun run arch`'s "packages-must-not-import-app" rule enforces: packages/* must never
 // import from app/*, only the reverse.
-export const registerBootstrap = (app: Hono): void => {
+export const registerBootstrap = (app: AppHono): void => {
 	// ── Health check ──────────────────────────────────────────────────────────────
 	registerHealthRoutes(app);
 

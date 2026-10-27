@@ -1,6 +1,5 @@
-import type { Hono } from "hono";
-
 import { getHTML, getStaticAsset } from "../../packages/utils/static-files.js";
+import type { AppHono } from "../../types/hono";
 
 const STATIC_PAGES = new Map<string, string>([
 	["/", "html/index.html"],
@@ -8,7 +7,7 @@ const STATIC_PAGES = new Map<string, string>([
 	["/docs", "html/docs.html"],
 ]);
 
-export const registerStaticRoutes = (app: Hono): Hono => {
+export const registerStaticRoutes = (app: AppHono): AppHono => {
 	// HTML pages
 	for (const [route, file] of STATIC_PAGES) {
 		app.get(route, async (c) => {

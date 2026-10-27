@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-
 import { registerBodyLimit } from "../packages/middlewares/body-limit";
 import { registerCompression } from "../packages/middlewares/compression";
 import { registerCors } from "../packages/middlewares/cors";
@@ -9,10 +8,11 @@ import { registerNotFound } from "../packages/middlewares/not-found";
 import { registerRateLimiter } from "../packages/middlewares/rate-limiter";
 import { registerRequestLogging } from "../packages/middlewares/request-logging";
 import { registerSecurityHeaders } from "../packages/middlewares/security-headers";
+import type { AppEnv, AppHono } from "../types/hono";
 import { registerBootstrap } from "./routes";
 
-export const createApp = (): Hono => {
-	const app = new Hono();
+export const createApp = (): AppHono => {
+	const app = new Hono<AppEnv>();
 
 	// Error and not-found handlers are app-wide in Hono, so their position doesn't matter.
 	registerErrorHandler(app);

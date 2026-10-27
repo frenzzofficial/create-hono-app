@@ -1,5 +1,5 @@
-import type { Hono } from "hono";
 import { cors } from "hono/cors";
+import type { AppHono } from "../../types/hono";
 
 import { envAppConfig } from "../env/app.env";
 import { envClientConfig } from "../env/client.env";
@@ -9,7 +9,7 @@ import { envClientConfig } from "../env/client.env";
 //
 // Register this early, before any route, so preflight (OPTIONS) requests are answered
 // before hitting the rate limiter or CSRF check.
-export const registerCors = (app: Hono): void => {
+export const registerCors = (app: AppHono): void => {
 	if (!envAppConfig.ENABLE_CORS) return;
 
 	app.use(

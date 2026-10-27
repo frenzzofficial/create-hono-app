@@ -1,4 +1,4 @@
-import type { Hono } from "hono";
+import { type AppHono, defineMiddleware } from "../../types/hono";
 
 import { envAppConfig } from "../env/app.env";
 
@@ -11,30 +11,33 @@ import { envAppConfig } from "../env/app.env";
 const MIN_BYTES_TO_COMPRESS = 1024;
 const COMPRESSIBLE_TYPE = /^(application\/json|text\/)/i;
 
-export const registerCompression = (app: Hono): void => {
+export const registerCompression = (app: AppHono): void => {
 	if (!envAppConfig.ENABLE_COMPRESSION) return;
 
-	app.use("*", async (c, next) => {
-		await next();
+	app.use(
+		"*",
+		defineMiddleware(async (c, next) => {
+			await next();
 
-		const res = c.res;
-		if (!res.body) return;
-		if (res.headers.has("content-encoding")) return;
-		if (!(c.req.header("accept-encoding") ?? "").includes("gzip")) return;
-		if (!COMPRESSIBLE_TYPE.test(res.headers.get("content-type") ?? "")) return;
+			const res = c.res;
+			if (!res.body) return;
+			if (res.headers.has("content-encoding")) return;
+			if (!(c.req.header("accept-encoding") ?? "").includes("gzip")) return;
+			if (!COMPRESSIBLE_TYPE.test(res.headers.get("content-type") ?? "")) return;
 
-		const bytes = new Uint8Array(await res.clone().arrayBuffer());
-		if (bytes.byteLength < MIN_BYTES_TO_COMPRESS) return;
+			const bytes = new Uint8Array(await res.clone().arrayBuffer());
+			if (bytes.byteLength < MIN_BYTES_TO_COMPRESS) return;
 
-		const headers = new Headers(res.headers);
-		headers.set("content-encoding", "gzip");
-		headers.delete("content-length");
-		headers.append("vary", "Accept-Encoding");
+			const headers = new Headers(res.headers);
+			headers.set("content-encoding", "gzip");
+			headers.delete("content-length");
+			headers.append("vary", "Accept-Encoding");
 
-		c.res = new Response(Bun.gzipSync(bytes), {
-			status: res.status,
-			statusText: res.statusText,
-			headers,
-		});
-	});
+			c.res = new Response(Bun.gzipSync(bytes), {
+				status: res.status,
+				statusText: res.statusText,
+				headers,
+			});
+		}),
+	);
 };

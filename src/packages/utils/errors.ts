@@ -1,12 +1,14 @@
+import type { ContentfulStatusCode } from "hono/utils/http-status";
+
 // AppError is the ONLY error type thrown from services.
 // isOperational = true  → user-facing, safe to send as-is in the response
 // isOperational = false → programming error, log + return 500
 
 export class AppError extends Error {
-	readonly statusCode: number;
+	readonly statusCode: ContentfulStatusCode;
 	readonly isOperational: boolean;
 
-	constructor(message: string, statusCode: number, isOperational = true) {
+	constructor(message: string, statusCode: ContentfulStatusCode, isOperational = true) {
 		super(message);
 		this.name = "AppError";
 		this.statusCode = statusCode;

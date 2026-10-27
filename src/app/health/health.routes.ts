@@ -1,12 +1,11 @@
-import type { Context, Hono } from "hono";
 import { describeRoute } from "hono-openapi";
-
 import { appConfig } from "../../packages/configs/app.config";
 import type { HealthResponse } from "../../packages/schema/health.schema";
 import { ok } from "../../packages/utils/response";
+import type { AppContext, AppHono } from "../../types/hono";
 import { getHealthStatus } from "./health.service";
 
-const handleHealthCheck = async (c: Context) => {
+const handleHealthCheck = async (c: AppContext) => {
 	const health = (await getHealthStatus()) as HealthResponse;
 	// 503 when the DB is unreachable — this is what actually lets load
 	// balancers / uptime monitors distinguish "app is up" from "app is up
@@ -24,7 +23,7 @@ const healthRoute = describeRoute({
 	},
 });
 
-export const registerHealthRoutes = (app: Hono): void => {
+export const registerHealthRoutes = (app: AppHono): void => {
 	app.get("/health", healthRoute, handleHealthCheck);
 	app.get(`${appConfig.app.apiPrefix}/health`, healthRoute, handleHealthCheck);
 };

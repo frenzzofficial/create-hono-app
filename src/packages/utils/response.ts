@@ -1,11 +1,6 @@
-import type { Context } from "hono";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 
-type JsonStatus = Parameters<Context["json"]>[1];
+import type { AppContext } from "../../types/hono";
 
-const jsonStatus = (status: number): JsonStatus => status as JsonStatus;
-
-export const ok = <T>(c: Context, data: T, status = 200) =>
-	c.json({ success: true, data }, jsonStatus(status));
-
-// export const err = (c: Context, message: string, status = 500) =>
-// 	c.json({ success: false, error: message }, jsonStatus(status));
+export const ok = <T>(c: AppContext, data: T, status: ContentfulStatusCode = 200) =>
+	c.json({ success: true, data }, status);

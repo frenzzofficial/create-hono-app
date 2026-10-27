@@ -1,4 +1,4 @@
-import type { Hono } from "hono";
+import { type AppHono, defineMiddleware } from "../../types/hono";
 
 import { envAppConfig } from "../env/app.env";
 
@@ -32,27 +32,30 @@ const buildCsp = (isSwaggerUiPage: boolean): string =>
 const buildPermissionsPolicy = (): string =>
 	["camera=()", "microphone=()", "geolocation=()", "interest-cohort=()"].join(", ");
 
-export const registerSecurityHeaders = (app: Hono): void => {
+export const registerSecurityHeaders = (app: AppHono): void => {
 	if (!envAppConfig.ENABLE_SECURITY_HEADERS) return;
 
-	app.use("*", async (c, next) => {
-		c.header("x-frame-options", "DENY");
-		c.header("x-xss-protection", "1; mode=block");
-		c.header("x-content-type-options", "nosniff");
-		c.header("referrer-policy", "no-referrer");
-		c.header("x-dns-prefetch-control", "off");
-		c.header("cross-origin-resource-policy", "same-origin");
-		c.header("cross-origin-opener-policy", "same-origin");
-		c.header("content-security-policy", buildCsp(c.req.path === "/openapi"));
-		c.header("permissions-policy", buildPermissionsPolicy());
+	app.use(
+		"*",
+		defineMiddleware(async (c, next) => {
+			c.header("x-frame-options", "DENY");
+			c.header("x-xss-protection", "1; mode=block");
+			c.header("x-content-type-options", "nosniff");
+			c.header("referrer-policy", "no-referrer");
+			c.header("x-dns-prefetch-control", "off");
+			c.header("cross-origin-resource-policy", "same-origin");
+			c.header("cross-origin-opener-policy", "same-origin");
+			c.header("content-security-policy", buildCsp(c.req.path === "/openapi"));
+			c.header("permissions-policy", buildPermissionsPolicy());
 
-		if (envAppConfig.NODE_ENV === "production") {
-			c.header(
-				"strict-transport-security",
-				`max-age=${HSTS_MAX_AGE_SECONDS}; includeSubDomains`,
-			);
-		}
+			if (envAppConfig.NODE_ENV === "production") {
+				c.header(
+					"strict-transport-security",
+					`max-age=${HSTS_MAX_AGE_SECONDS}; includeSubDomains`,
+				);
+			}
 
-		await next();
-	});
+			await next();
+		}),
+	);
 };

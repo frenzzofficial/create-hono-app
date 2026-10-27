@@ -1,5 +1,5 @@
-import type { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
+import { type AppHono, defineMiddleware } from "../../types/hono";
 
 import { envAppConfig } from "../env/app.env";
 import { AppError } from "../utils/errors";
@@ -19,28 +19,31 @@ const generateToken = (): string => {
 // - Every response without the cookie gets one issued (readable by JS, NOT httpOnly —
 //   the client must be able to read it to echo it back).
 // - Every mutating request must repeat that value in the `x-csrf-token` header.
-export const registerCsrfProtection = (app: Hono): void => {
+export const registerCsrfProtection = (app: AppHono): void => {
 	if (!envAppConfig.ENABLE_CSRF_PROTECTION) return;
 
-	app.use("*", async (c, next) => {
-		let token = getCookie(c, CSRF_COOKIE_NAME);
-		if (!token) {
-			token = generateToken();
-			setCookie(c, CSRF_COOKIE_NAME, token, {
-				httpOnly: false,
-				path: "/",
-				sameSite: "Lax",
-				secure: envAppConfig.NODE_ENV === "production",
-			});
-		}
-
-		if (!SAFE_METHODS.has(c.req.method) && !c.req.header("authorization")) {
-			const headerToken = c.req.header(CSRF_HEADER_NAME);
-			if (!headerToken || headerToken !== token) {
-				throw AppError.forbidden("Invalid or missing CSRF token");
+	app.use(
+		"*",
+		defineMiddleware(async (c, next) => {
+			let token = getCookie(c, CSRF_COOKIE_NAME);
+			if (!token) {
+				token = generateToken();
+				setCookie(c, CSRF_COOKIE_NAME, token, {
+					httpOnly: false,
+					path: "/",
+					sameSite: "Lax",
+					secure: envAppConfig.NODE_ENV === "production",
+				});
 			}
-		}
 
-		await next();
-	});
+			if (!SAFE_METHODS.has(c.req.method) && !c.req.header("authorization")) {
+				const headerToken = c.req.header(CSRF_HEADER_NAME);
+				if (!headerToken || headerToken !== token) {
+					throw AppError.forbidden("Invalid or missing CSRF token");
+				}
+			}
+
+			await next();
+		}),
+	);
 };

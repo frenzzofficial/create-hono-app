@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, join, resolve, sep } from "node:path";
 
 // Project root (current working directory)
 // e.g. /var/task on Vercel
@@ -43,8 +43,12 @@ export const getStaticAsset = async (path: string): Promise<StaticAsset | undefi
 		};
 	}
 
+	// Defense in depth: never read outside the assets directory, whatever the URL contained.
+	const filePath = resolve(STATIC_ROOT, path);
+	if (!filePath.startsWith(STATIC_ROOT + sep)) return undefined;
+
 	try {
-		const body = await readFile(join(STATIC_ROOT, path));
+		const body = await readFile(filePath);
 
 		cache.set(path, body);
 
