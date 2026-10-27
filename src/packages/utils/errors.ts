@@ -45,6 +45,10 @@ export class AppError extends Error {
 		return new AppError(message, 429);
 	}
 
+	static payloadTooLarge(message = "Request body too large"): AppError {
+		return new AppError(message, 413);
+	}
+
 	static internal(message = "Internal server error"): AppError {
 		return new AppError(message, 500, false);
 	}

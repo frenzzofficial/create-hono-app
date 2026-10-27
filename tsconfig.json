@@ -1,76 +1,30 @@
 {
 	"compilerOptions": {
+		// Environment setup & latest features
+		"lib": ["ESNext"],
 		"target": "ESNext",
-		"module": "NodeNext",
-
-		"strict": true,
-		"allowJs": false,
-		"checkJs": false,
-		"verbatimModuleSyntax": true,
-		"skipLibCheck": true,
-
-		"types": ["node"],
-
-		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx",
-
-		"outDir": "./dist",
-		"rootDir": "./",
-
-		/* ---------- Module Resolution ---------- */
-
-		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"isolatedModules": true,
+		"module": "Preserve",
 		"moduleDetection": "force",
+		"jsx": "react-jsx",
+		"allowJs": true,
+		"types": ["bun"],
 
-		/* ---------- Type Safety ---------- */
+		// Bundler mode
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
 
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"strictBindCallApply": true,
-		"strictPropertyInitialization": true,
-		"noImplicitThis": true,
-		"alwaysStrict": true,
-		"useUnknownInCatchVariables": true,
-
-		/* ---------- Additional Strictness ---------- */
-
-		"exactOptionalPropertyTypes": true,
+		// Best practices
+		"strict": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
 		"noUncheckedIndexedAccess": true,
 		"noImplicitOverride": true,
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitReturns": true,
-		"noPropertyAccessFromIndexSignature": true,
 
-		/* ---------- Code Quality ---------- */
-
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"allowUnreachableCode": false,
-		"allowUnusedLabels": false,
-
-		/* ---------- Emit ---------- */
-
-		"declaration": false,
-		"declarationMap": false,
-		"sourceMap": true,
-		"removeComments": false,
-		"newLine": "lf",
-
-		/* ---------- Performance ---------- */
-
-		"incremental": true,
-		"tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildinfo",
-
-		/* ---------- Consistency ---------- */
-
-		"forceConsistentCasingInFileNames": true
-	},
-
-	"include": ["src", "api"],
-	"exclude": ["node_modules", "dist", ".vercel", ".cache"]
+		// Some stricter flags (disabled by default)
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noPropertyAccessFromIndexSignature": false
+	}
 }

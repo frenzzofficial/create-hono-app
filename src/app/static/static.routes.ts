@@ -1,39 +1,38 @@
-import type { Context, Hono } from "hono";
+import type { Hono } from "hono";
+
 import { getHTML, getStaticAsset } from "../../packages/utils/static-files.js";
 
 const STATIC_PAGES = new Map<string, string>([
-	["/", "html/Homepage.html"],
-	["/home", "html/Homepage.html"],
+	["/", "html/index.html"],
+	["/home", "html/index.html"],
+	["/docs", "html/docs.html"],
 ]);
 
-const pageHandler = async (c: Context, file: string): Promise<Response> => {
-	const html = await getHTML(file);
-
-	if (!html) {
-		return c.notFound();
-	}
-
-	return c.html(html);
-};
-
-export const registerStaticRoutes = (app: Hono): void => {
+export const registerStaticRoutes = (app: Hono): Hono => {
 	// HTML pages
 	for (const [route, file] of STATIC_PAGES) {
-		app.get(route, (c) => pageHandler(c, file));
+		app.get(route, async (c) => {
+			const html = await getHTML(file);
+
+			if (!html) return c.text("Not Found", 404);
+
+			return c.html(html);
+		});
 	}
 
 	// Static assets
 	app.get("/assets/*", async (c) => {
 		const assetPath = c.req.path.slice("/assets/".length);
+
 		const asset = await getStaticAsset(assetPath);
 
-		if (!asset) {
-			return c.notFound();
-		}
+		if (!asset) return c.text("Not Found", 404);
 
-		c.header("Content-Type", asset.contentType);
-		c.header("Cache-Control", "public, max-age=31536000, immutable");
-
-		return c.body(new Uint8Array(asset.body));
+		return c.body(new Uint8Array(asset.body), 200, {
+			"Content-Type": asset.contentType,
+			"Cache-Control": "public, max-age=31536000, immutable",
+		});
 	});
+
+	return app;
 };

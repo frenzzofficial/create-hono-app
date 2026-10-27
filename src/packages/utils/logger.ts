@@ -1,30 +1,29 @@
-// Structured JSON logger. Every line has the same shape — timestamp, level,
-// requestId, message, plus arbitrary context fields — so it's queryable in
-// Vercel's log viewer or any log drain, instead of grepping free-text lines.
-// requestId is pulled automatically from AsyncLocalStorage; callers never
-// need to pass it in.
+import { envAppConfig } from "../env/app.env";
 
-import { getRequestId } from "./requestContext.js";
+type LogLevel = "error" | "warn" | "info" | "debug";
 
-type LogLevel = "info" | "warn" | "error";
+const WEIGHT: Record<LogLevel, number> = { error: 0, warn: 1, info: 2, debug: 3 };
 
-type LogFields = Record<string, unknown>;
+const write = (level: LogLevel, message: string, fields?: Record<string, unknown>): void => {
+	if (WEIGHT[level] > WEIGHT[envAppConfig.LOG_LEVEL]) return;
 
-const write = (level: LogLevel, message: string, fields?: LogFields): void => {
-	const line = {
-		timestamp: new Date().toISOString(),
-		level,
-		requestId: getRequestId(),
-		message,
-		...fields,
-	};
+	const line = `${JSON.stringify({ time: new Date().toISOString(), level, message, ...fields })}\n`;
 
-	const out = level === "error" ? console.error : level === "warn" ? console.warn : console.log;
-	out(JSON.stringify(line));
+	// stderr for problems, stdout for the rest. Vercel captures both streams.
+	if (level === "error" || level === "warn") {
+		process.stderr.write(line);
+		return;
+	}
+	process.stdout.write(line);
 };
 
 export const logger = {
-	info: (message: string, fields?: LogFields): void => write("info", message, fields),
-	warn: (message: string, fields?: LogFields): void => write("warn", message, fields),
-	error: (message: string, fields?: LogFields): void => write("error", message, fields),
+	error: (message: string, fields?: Record<string, unknown>): void =>
+		write("error", message, fields),
+	warn: (message: string, fields?: Record<string, unknown>): void =>
+		write("warn", message, fields),
+	info: (message: string, fields?: Record<string, unknown>): void =>
+		write("info", message, fields),
+	debug: (message: string, fields?: Record<string, unknown>): void =>
+		write("debug", message, fields),
 };

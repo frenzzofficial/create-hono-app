@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const healthSchema = z.object({
+const healthSchema = z.object({
 	status: z.enum(["ok", "degraded", "error"]),
 	message: z.string(),
 	timestamp: z.string(),

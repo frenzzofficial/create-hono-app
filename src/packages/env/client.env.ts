@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { parseEnv } from "../utils/parse-env";
+
 const clientEnvSchema = z.object({
 	// Primary frontend origin
 	CLIENT_ORIGIN: z.url().trim().default("http://localhost:3000"),
@@ -23,21 +25,9 @@ const clientEnvSchema = z.object({
 		.pipe(z.array(z.url())),
 });
 
-const parsedClientEnv = clientEnvSchema.safeParse(process.env);
-
-if (!parsedClientEnv.success) {
-	console.error("❌ Invalid client environment variables:");
-
-	for (const issue of parsedClientEnv.error.issues) {
-		console.error(`- ${issue.path.join(".")}: ${issue.message}`);
-	}
-
-	throw new Error("Client environment validation failed");
-}
-
 /**
  * Public, immutable config.
  */
-export const envClientConfig = Object.freeze(parsedClientEnv.data);
+export const envClientConfig = Object.freeze(parseEnv(clientEnvSchema, "Client"));
 
 export type EnvClientConfig = typeof envClientConfig;

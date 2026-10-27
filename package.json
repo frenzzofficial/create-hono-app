@@ -1,56 +1,52 @@
 {
 	"name": "create-hono-app",
-	"version": "1.0.0",
-	"description": "A top 1% modern Hono backend starter built for seamless deployment on Vercel. Clean, scalable, and developer‑friendly, it delivers edge‑ready performance, minimal boilerplate for rapid prototyping or production apps.",
+	"version": "2.0.0",
+	"private": true,
+	"description": "A lightweight, scalable authentication service featuring Hono, Drizzle ORM, PostgreSQL, and TypeScript",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx watch src/app/server.ts",
-		"lint": "biome lint .",
+		"arch": "depcruise src --config .dependency-cruiser.cjs",
+		"build:check": "bun build src/index.ts --outdir dist --target bun",
+		"check": "bun run verify",
+		"deps:upgrade": "ncu -i",
+		"dev": "bun --watch src/app/server.ts",
 		"format": "biome format --write .",
-		"check": "biome check --write .",
-		"verify": "pnpm run lint && pnpm run format && pnpm run check",
-		"prepare": "husky"
+		"knip": "bunx --bun knip",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"prepare": "husky",
+		"secrets": "secretlint \"**/*\"",
+		"spell": "cspell --no-progress \"src/**/*.ts\" \"tests/**/*.ts\" \"*.md\"",
+		"start": "bun src/app/server.ts",
+		"test": "bun test",
+		"test:coverage": "bun test --coverage",
+		"type-coverage": "type-coverage --strict --at-least 100 --ignore-catch",
+		"typecheck": "tsc --noEmit",
+		"verify": "bun run typecheck && bun run lint:fix && bun run knip && bun run spell && bun run test"
 	},
 	"dependencies": {
-		"@hono/node-server": "^2.1.0",
 		"@hono/swagger-ui": "^0.6.1",
-		"@node-rs/argon2": "^2.0.2",
-		"dotenv": "^17.4.2",
-		"hono": "^4.13.0",
-		"zod": "^4.4.3"
+		"hono": "^4.13.14",
+		"hono-openapi": "^1.5.0",
+		"jose": "^6.2.13",
+		"zod": "^4.6.7"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.6",
-		"@commitlint/cli": "^21.2.1",
-		"@commitlint/config-conventional": "^21.2.0",
-		"@types/node": "^26.1.2",
+		"@biomejs/biome": "^2.6.3",
+		"@commitlint/cli": "^21.2.4",
+		"@commitlint/config-conventional": "^21.2.4",
+		"@faker-js/faker": "^10.6.0",
+		"@secretlint/secretlint-rule-preset-recommend": "^13.1.0",
+		"@types/bun": "^1.4.4",
+		"cspell": "^10.4.0",
+		"dependency-cruiser": "^18.7.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^17.3.0",
-		"tsx": "^4.23.5",
+		"knip": "^6.43.0",
+		"lint-staged": "^17.6.0",
+		"npm-check-updates": "^23.1.1",
+		"secretlint": "^13.1.0",
+		"sort-package-json": "^4.1.0",
+		"type-coverage": "^2.30.4",
 		"typescript": "^5.9.3"
-	},
-	"lint-staged": {
-		"*.{js,ts,jsx,tsx,json}": [
-			"biome check --write --no-errors-on-unmatched"
-		]
-	},
-	"license": "CC0-1.0",
-	"author": "frenzzofficial",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/frenzzofficial/create-hono-app.git"
-	},
-	"keywords": [
-		"hono",
-		"nextjs",
-		"bun",
-		"typescript",
-		"react",
-		"frontend",
-		"backend",
-		"api",
-		"starter",
-		"template",
-		"create-hono-app"
-	]
+	}
 }
